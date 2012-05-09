@@ -4,25 +4,14 @@
  */
 
 var express = require('express')
-  , routes = require('./routes')
-  ,io = require('socket.io'),
-    amqp = require('node-amqp'),
-    nconf = require('nconf');
+    , routes = require('./routes')
+    , io = require('socket.io')
+    , amqp = require('node-amqp')
+    , nconf = require('nconf');
 
 // Loading settings from file
 nconf.file({file: 'appSettings.json'});
-// Initialising connection to RabbitMQ.
-var rabbitmqConnection = amqp.createConnection();//({host: nconf.get('rabbitmq:host'),
-                                            //port: nconf.get('rabbitmq:port')});
 
-rabbitmqConnection.on('ready', function(){
-    rabbitmqConnection.queue('outgoingQ'/*nconf.get('rabbit:queueName')*/, {autoDelete: false}, function(q){
-        q.bind('#');
-        q.subscribe(function(message){
-            console.log(message);
-        });
-    });
-});
 var app = module.exports = express.createServer();
 
 // Configuration
@@ -58,9 +47,23 @@ app.listen(3000, function(){
 // intercepting traffic destined for /socket.io/
 var sockio = io.listen(app);
 
-sockio.sockets.on('connection', function(socket){
-    socket.emit('news', {hello: 'world'});
-    socket.on('my other event', function(data){
-        console.log(data);
+// Initialising connection to RabbitMQ.
+var rabbitmqConnection = amqp.createConnection({host: nconf.get('rabbitmq:host'), port: nconf.get('rabbitmq:port')});
+
+rabbitmqConnection.on('ready', function(){
+    rabbitmqConnection.queue(nconf.get('rabbitmq:queueName'), {autoDelete: false}, function(q){
+        q.bind('#');
+
+        sockio.sockets.on('connection', function(socket){
+            socket.emit('news', {hello: 'world'});
+            socket.on('browser message', function(data){
+                console.log("Browser says: " + data);
+            });
+            q.subscribe(function(message){//todo: do we subscribe every time a client connects?
+                console.log(message);
+                // The following de-serialises JSON IFF publisher set message contentType to application/json.
+                socket.emit('message', message)
+            });
+        });
     });
 });
