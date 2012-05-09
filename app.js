@@ -4,7 +4,8 @@
  */
 
 var express = require('express')
-  , routes = require('./routes');
+  , routes = require('./routes')
+  ,io = require('socket.io');
 
 var app = module.exports = express.createServer();
 
@@ -33,6 +34,17 @@ app.configure('production', function(){
 
 app.get('/', routes.index);
 
+// firing up the HTTP listeners.
 app.listen(3000, function(){
-  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+    console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+});
+
+// intercepting traffic destined for /socket.io/
+var sockio = io.listen(app);
+
+sockio.sockets.on('connection', function(socket){
+    socket.emit('news', {hello: 'world'});
+    socket.on('my other event', function(data){
+        console.log(data);
+    });
 });
