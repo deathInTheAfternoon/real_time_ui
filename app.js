@@ -5,8 +5,24 @@
 
 var express = require('express')
   , routes = require('./routes')
-  ,io = require('socket.io');
+  ,io = require('socket.io'),
+    amqp = require('node-amqp'),
+    nconf = require('nconf');
 
+// Loading settings from file
+nconf.file({file: 'appSettings.json'});
+// Initialising connection to RabbitMQ.
+var rabbitmqConnection = amqp.createConnection();//({host: nconf.get('rabbitmq:host'),
+                                            //port: nconf.get('rabbitmq:port')});
+
+rabbitmqConnection.on('ready', function(){
+    rabbitmqConnection.queue('outgoingQ'/*nconf.get('rabbit:queueName')*/, {autoDelete: false}, function(q){
+        q.bind('#');
+        q.subscribe(function(message){
+            console.log(message);
+        });
+    });
+});
 var app = module.exports = express.createServer();
 
 // Configuration
