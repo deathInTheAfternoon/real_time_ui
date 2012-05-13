@@ -10,18 +10,26 @@
 <body>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        var messageBusiCounter = 0;
         var socket = io.connect('http://localhost');
         socket.on('news', function(data){
             document.getElementById('console').innerHTML = data.message;
         });
-        socket.on('message', function(data){
-            document.getElementById('console').innerHTML = data.id;
+        socket.on('messageSim', function(genEvent){
+            var currentHTML = document.getElementById('consoleSim').innerHTML;
+            document.getElementById('consoleSim').innerHTML = currentHTML + genEvent.description;
+        });
+        socket.on('messageBusi', function(busiEvent){
+            var currentHTML = document.getElementById('consoleBusi').innerHTML;
+            document.getElementById('consoleBusi').innerHTML = currentHTML + busiEvent.id;
+            messageBusiCounter++;
+            document.getElementById('messageBusiCounter').innerHTML = messageBusiCounter;
         });
     </script>
 
-    <div id="console">
-
-    </div>
+    <div id="messageBusiCounter">Received Business Events: 0</div>
+    <div id="consoleSim"></div>
+    <div id="consoleBusi"></div>
 
     <h2> Flot Example</h2>
 
