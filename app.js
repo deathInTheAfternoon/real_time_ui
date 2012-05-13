@@ -51,19 +51,25 @@ var sockio = io.listen(app);
 var rabbitmqConnection = amqp.createConnection({host: nconf.get('rabbitmq:host'), port: nconf.get('rabbitmq:port')});
 
 rabbitmqConnection.on('ready', function(){
-    rabbitmqConnection.queue(nconf.get('rabbitmq:queueName'), {autoDelete: false}, function(q){
-        q.bind('#');
+    // Parameters for Exch and Q must match server's.
+    var exch = rabbitmqConnection.exchange(nconf.get('rabbitmq:exchange'), {type: 'fanout', durable: false}, function(exchange){
+     rabbitmqConnection.queue('', function(q) {
+            q.bind(nconf.get('rabbitmq:exchange'), '');
 
-        sockio.sockets.on('connection', function(socket){
-            socket.emit('news', {hello: 'world'});
-            socket.on('browser message', function(data){
-                console.log("Browser says: " + data);
-            });
-            q.subscribe(function(message){//todo: do we subscribe every time a client connects?
-                console.log(message);
-                // The following de-serialises JSON IFF publisher set message contentType to application/json.
-                socket.emit('message', message)
+            sockio.sockets.on('connection', function(socket){
+                socket.emit('news', {hello: 'world'});
+                socket.on('browser message', function(data){
+                    console.log("Browser says: " + data);
+                });
+                q.subscribe(function(message){//todo: do we subscribe every time a client connects?
+                    //todo: add start/stop/progress messages.
+                    //todo: add visuals for start stop progress using HTML5.
+                    console.log(message);
+                    // The following de-serialises JSON IFF publisher set message contentType to application/json.
+                    socket.emit('message', message)
+                });
             });
         });
+
     });
 });

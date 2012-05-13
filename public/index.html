@@ -2,6 +2,10 @@
 <html>
 <head>
     <title></title>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" id="jquery"></script>
+    <script type="text/javascript" src="javascripts/flot/jquery.flot.js"></script>
+    <link href="javascripts/flot/examples/layout.css" type="text/css" rel="stylesheet">
 </head>
 <body>
     <script src="/socket.io/socket.io.js"></script>
@@ -17,6 +21,74 @@
 
     <div id="console">
 
+    </div>
+
+    <h2> Flot Example</h2>
+
+    <h2>Dynamic Data from the server to the client </h2>
+
+    <div id="ph_graph" style="width:600px;height:300px"></div>
+
+    <div id="F785884614242HECIM5_outer" style="display: inline">
+        <div style="display: inline" id="F785884614242HECIM5">
+            hi
+            <script type="text/javascript">
+
+                var data_ph_graph_1 = [[1.336717451648E12, -0.12037525199521629]
+                            , [1.336717452648E12, 0.7531703312739665]
+                            , [1.336717453648E12, 0.9675097223780483]
+                            , [1.336717454648E12, 0.33504411667251616]
+                            , [1.336717455648E12, -0.5906661206762]
+                            , [1.336717456649E12, -0.5108492585751718]
+                            , [1.336717457649E12, 0.4235528534706164]
+                            , [1.336717458649E12, 0.9872437835653652]
+                            , [1.336717459649E12, 0.6868576406798412]
+                            , [1.336717460649E12, -0.21469505254788385]
+                            , [1.336717461649E12, -0.928337651351967]
+                        ]
+                        ;
+                var data_ph_graph_2 = [[1.336717451648E12, 0.9927284617190585]
+                            , [1.336717452648E12, 0.6578255483702831]
+                            , [1.336717453648E12, -0.25283381321324855]
+                            , [1.336717454648E12, -0.9422024410301288]
+                            , [1.336717455648E12, -0.8069160637174903]
+                            , [1.336717456649E12, 0.8596703059971289]
+                            , [1.336717457649E12, 0.9058713928129636]
+                            , [1.336717458649E12, 0.15921592825952513]
+                            , [1.336717459649E12, -0.7267919794822464]
+                            , [1.336717460649E12, -0.9766811324129597]
+                            , [1.336717461649E12, -0.37173808667166974]
+                        ]
+                        ;
+                var data_ph_graph_3 = [[1.336717451648E12, 1.8650816714429006]
+                            , [1.336717452648E12, 2.0688214280145325]
+                            , [1.336717453648E12, 0.46184209595155123]
+                            , [1.336717454648E12, -1.5493607653877415]
+                            , [1.336717455648E12, -2.2044982481111806]
+                            , [1.336717456649E12, 1.208491353419086]
+                            , [1.336717457649E12, 2.2352956390965435]
+                            , [1.336717458649E12, 1.3056756400844156]
+                            , [1.336717459649E12, -0.7667263182846515]
+                            , [1.336717460649E12, -2.1680573173738034]
+                            , [1.336717461649E12, -1.6718138246953065]
+                        ]
+                        ;
+                var datas_ph_graph = [{"label": "Serie 1", "data": data_ph_graph_1}, {"label": "Serie 2", "data": data_ph_graph_2}, {"label": "Serie 3", "data": data_ph_graph_3}]
+                        ;
+                var options_ph_graph = {"xaxis": {"mode": "time"}};
+                function flot_plot_ph_graph() {
+                    jQuery('#'+"ph_graph").addClass("flot_lww");
+                    jQuery('#'+"ph_graph").show();
+
+                    var plot_ph_graph = jQuery.plot(jQuery("#ph_graph"), datas_ph_graph, options_ph_graph);
+
+
+                }
+
+                jQuery(document).ready(function() {flot_plot_ph_graph();});
+
+            </script>
+        </div>
     </div>
 </body>
 </html>
